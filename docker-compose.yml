@@ -1,0 +1,136 @@
+# ============================================
+# Cyberary-AI Docker Compose
+# ============================================
+# Usage: docker compose up --build
+# ============================================
+
+version: "3.9"
+
+services:
+  # --- Frontend (React + Vite) ---
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: cyberary-frontend
+    ports:
+      - "${FRONTEND_PORT:-3000}:3000"
+    environment:
+      - VITE_API_URL=http://localhost:${BACKEND_PORT:-8000}
+      - VITE_WS_URL=ws://localhost:${BACKEND_PORT:-8000}
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - cyberary-net
+    restart: unless-stopped
+
+  # --- Backend (FastAPI + Uvicorn) ---
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: cyberary-backend
+    ports:
+      - "${BACKEND_PORT:-8000}:8000"
+    env_file:
+      - .env
+    depends_on:
+      postgres:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - cyberary-net
+    restart: unless-stopped
+
+  # --- PostgreSQL ---
+  postgres:
+    image: postgres:16-alpine
+    container_name: cyberary-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-cyberary}
+      POSTGRES_USER: ${POSTGRES_USER:-cyberary_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change_me_in_production}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-cyberary_user} -d ${POSTGRES_DB:-cyberary}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - cyberary-net
+    restart: unless-stopped
+
+  # --- MongoDB ---
+  mongodb:
+    image: mongo:7
+    container_name: cyberary-mongodb
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER:-cyberary_mongo}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD:-change_me_in_production}
+      MONGO_INITDB_DATABASE: ${MONGO_DB:-cyberary_logs}
+    volumes:
+      - mongodata:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')", "-u", "${MONGO_USER:-cyberary_mongo}", "-p", "${MONGO_PASSWORD:-change_me_in_production}", "--authenticationDatabase", "admin"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - cyberary-net
+    restart: unless-stopped
+
+  # --- Ollama (LLM) ---
+  ollama:
+    image: ollama/ollama:latest
+    container_name: cyberary-ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_models:/root/.ollama
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:11434/api/tags || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    networks:
+      - cyberary-net
+    restart: unless-stopped
+
+  # --- Honeypot (Stub for Phase 3) ---
+  honeypot:
+    build:
+      context: ./honeypot
+      dockerfile: Dockerfile
+    container_name: cyberary-honeypot
+    ports:
+      - "${COWRIE_PORT:-2222}:2222"
+    networks:
+      - cyberary-net
+    restart: unless-stopped
+
+networks:
+  cyberary-net:
+    driver: bridge
+    name: cyberary-net
+
+volumes:
+  pgdata:
+    name: cyberary-pgdata
+  mongodata:
+    name: cyberary-mongodata
+  ollama_models:
+    name: cyberary-ollama-models

@@ -1,0 +1,65 @@
+# ============================================
+# Cyberary-AI .gitignore
+# ============================================
+
+# --- Environment ---
+.env
+.env.local
+.env.production
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+dist/
+build/
+.eggs/
+*.egg
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+htmlcov/
+.coverage
+
+# --- Node.js ---
+node_modules/
+frontend/node_modules/
+frontend/dist/
+.npm
+.eslintcache
+
+# --- Docker ---
+docker/data/
+
+# --- IDEs ---
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# --- Logs ---
+*.log
+logs/
+
+# --- Database ---
+pgdata/
+mongodata/
+backend/data/
+*.db
+*.sqlite
+*.sqlite3
+
+# --- Ollama ---
+ollama_models/
+
+# --- Secrets ---
+*.pem
+*.key
+*.crt

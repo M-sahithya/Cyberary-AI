@@ -1,0 +1,197 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================ */
+/* Cyberary-AI Global Styles                    */
+/* Dark Cybersecurity SOC Theme                 */
+/* ============================================ */
+
+@layer base {
+  :root {
+    --color-surface-900: #0a0e17;
+    --color-surface-800: #0f1623;
+    --color-surface-700: #151d2e;
+    --color-accent-cyan: #00e5ff;
+    --color-accent-purple: #7c4dff;
+  }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #2a3a56 #0f1623;
+  }
+
+  *::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: #0f1623;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background: #2a3a56;
+    border-radius: 3px;
+  }
+
+  *::-webkit-scrollbar-thumb:hover {
+    background: #354766;
+  }
+
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: #0a0e17;
+    color: #e2e8f0;
+  }
+}
+
+@layer components {
+  /* Glassmorphism card */
+  .glass-card {
+    @apply bg-surface-800/70 backdrop-blur-md border border-surface-400/20 rounded-xl;
+  }
+
+  /* Glowing border effect */
+  .glow-border-cyan {
+    box-shadow: 0 0 0 1px rgba(0, 229, 255, 0.1),
+                0 0 15px rgba(0, 229, 255, 0.05);
+  }
+
+  .glow-border-purple {
+    box-shadow: 0 0 0 1px rgba(124, 77, 255, 0.1),
+                0 0 15px rgba(124, 77, 255, 0.05);
+  }
+
+  /* Status indicator dot */
+  .status-dot {
+    @apply w-2 h-2 rounded-full;
+  }
+
+  .status-dot-active {
+    @apply bg-accent-green;
+    box-shadow: 0 0 6px rgba(0, 230, 118, 0.6);
+  }
+
+  .status-dot-warning {
+    @apply bg-accent-orange;
+    box-shadow: 0 0 6px rgba(255, 145, 0, 0.6);
+  }
+
+  .status-dot-critical {
+    @apply bg-accent-red;
+    box-shadow: 0 0 6px rgba(255, 23, 68, 0.6);
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  /* Cyber button */
+  .btn-cyber {
+    @apply px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200
+           bg-cyber-600 text-white hover:bg-cyber-500
+           focus:outline-none focus:ring-2 focus:ring-cyber-400/50;
+  }
+
+  .btn-cyber-outline {
+    @apply px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200
+           border border-cyber-500/40 text-cyber-400 hover:bg-cyber-500/10
+           focus:outline-none focus:ring-2 focus:ring-cyber-400/50;
+  }
+
+  .btn-danger {
+    @apply px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200
+           bg-threat-critical/20 text-threat-critical border border-threat-critical/30
+           hover:bg-threat-critical/30
+           focus:outline-none focus:ring-2 focus:ring-threat-critical/50;
+  }
+
+  .btn-success {
+    @apply px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200
+           bg-accent-green/20 text-accent-green border border-accent-green/30
+           hover:bg-accent-green/30
+           focus:outline-none focus:ring-2 focus:ring-accent-green/50;
+  }
+
+  /* Severity badges */
+  .badge {
+    @apply px-2.5 py-0.5 rounded-full text-xs font-semibold uppercase tracking-wide;
+  }
+
+  .badge-critical {
+    @apply badge bg-threat-critical/20 text-threat-critical border border-threat-critical/30;
+  }
+
+  .badge-high {
+    @apply badge bg-threat-high/20 text-threat-high border border-threat-high/30;
+  }
+
+  .badge-medium {
+    @apply badge bg-threat-medium/20 text-threat-medium border border-threat-medium/30;
+  }
+
+  .badge-low {
+    @apply badge bg-threat-low/20 text-threat-low border border-threat-low/30;
+  }
+
+  .badge-info {
+    @apply badge bg-threat-info/20 text-threat-info border border-threat-info/30;
+  }
+
+  /* Input fields */
+  .input-cyber {
+    @apply w-full px-4 py-2.5 rounded-lg text-sm
+           bg-surface-700 border border-surface-400/30 text-gray-100
+           placeholder-gray-500
+           focus:outline-none focus:border-cyber-500/60 focus:ring-1 focus:ring-cyber-500/30
+           transition-all duration-200;
+  }
+
+  /* Table styles */
+  .table-cyber {
+    @apply w-full text-sm text-left;
+  }
+
+  .table-cyber thead {
+    @apply text-xs uppercase tracking-wider text-gray-400 border-b border-surface-400/30;
+  }
+
+  .table-cyber th {
+    @apply px-4 py-3 font-semibold;
+  }
+
+  .table-cyber td {
+    @apply px-4 py-3 border-b border-surface-400/10;
+  }
+
+  .table-cyber tbody tr {
+    @apply hover:bg-surface-700/50 transition-colors duration-150;
+  }
+}
+
+@layer utilities {
+  /* Text gradient */
+  .text-gradient-cyber {
+    @apply bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 bg-clip-text text-transparent;
+  }
+
+  /* Animated scanning line */
+  .scan-line {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .scan-line::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #00e5ff, transparent);
+    animation: scan 3s linear infinite;
+  }
+
+  @keyframes scan {
+    0% { left: -100%; }
+    100% { left: 100%; }
+  }
+}
